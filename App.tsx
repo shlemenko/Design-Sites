@@ -1,233 +1,257 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  User, 
-  Briefcase, 
-  Mail, 
-  MessageSquare, 
-  Settings, 
-  Image as ImageIcon 
-} from 'lucide-react';
-
-import { MenuBar } from './components/MenuBar';
-import { Window } from './components/Window';
-import { PortfolioApp } from './components/apps/PortfolioApp';
-import { AboutApp } from './components/apps/AboutApp';
-import { ChatApp } from './components/apps/ChatApp';
-import { AppID, AppConfig, WindowState } from './types';
-import { WALLPAPER_URL } from './constants';
-
-const INITIAL_WINDOW_SIZE = { width: 800, height: 600 };
-
-const APPS: AppConfig[] = [
-  { 
-    id: AppID.ABOUT, 
-    title: 'Обо мне', 
-    icon: User, 
-    color: 'bg-blue-500', 
-    component: <AboutApp /> 
-  },
-  { 
-    id: AppID.PROJECTS, 
-    title: 'Проекты', 
-    icon: Briefcase, 
-    color: 'bg-purple-500', 
-    component: <PortfolioApp />,
-    width: 900 
-  },
-  { 
-    id: AppID.CONTACT, 
-    title: 'Контакты', 
-    icon: Mail, 
-    color: 'bg-green-500', 
-    component: (
-      <div className="flex flex-col items-center justify-center h-full p-8 text-center">
-        <Mail size={64} className="text-gray-300 mb-4" />
-        <h2 className="text-2xl font-bold mb-2">Свяжитесь со мной</h2>
-        <p className="text-gray-600 mb-6">Я открыт для новых возможностей и интересных проектов.</p>
-        <a href="mailto:alex@example.com" className="px-6 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors shadow-lg">
-          Написать письмо
-        </a>
-      </div>
-    )
-  },
-  { 
-    id: AppID.CHAT, 
-    title: 'AI Помощник', 
-    icon: MessageSquare, 
-    color: 'bg-indigo-600', 
-    component: <ChatApp />,
-    width: 400,
-    height: 600
-  },
-];
-
-const DOCK_APPS: AppConfig[] = [
-  ...APPS,
-  { id: AppID.PHOTOS, title: 'Фото', icon: ImageIcon, color: 'bg-pink-500', component: null },
-  { id: AppID.SETTINGS, title: 'Настройки', icon: Settings, color: 'bg-gray-500', component: null },
-];
 
 export default function App() {
-  const [windows, setWindows] = useState<Record<string, WindowState>>({});
-  const [activeWindowId, setActiveWindowId] = useState<string | null>(null);
-  const [nextZIndex, setNextZIndex] = useState(10);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [showTear, setShowTear] = useState(false);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
-  // Initial Open
   useEffect(() => {
-    // Open About Me on load
-    openApp(AppID.ABOUT);
-  }, []);
+    const handleScroll = () => {
+      const totalScroll = document.documentElement.scrollTop;
+      const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scroll = `${totalScroll / windowHeight}`;
+      setScrollProgress(Number(scroll));
 
-  const openApp = (appId: AppID) => {
-    const appConfig = APPS.find(a => a.id === appId);
-    
-    if (windows[appId]) {
-      // Bring to front if already open
-      focusWindow(appId);
-      if (windows[appId].isMinimized) {
-        setWindows(prev => ({
-          ...prev,
-          [appId]: { ...prev[appId], isMinimized: false }
-        }));
+      // Tear effect on significant scroll changes
+      const scrollDelta = Math.abs(totalScroll - lastScrollY);
+      if (scrollDelta > 100) {
+        setShowTear(true);
+        setTimeout(() => setShowTear(false), 300);
       }
-      return;
+      setLastScrollY(totalScroll);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
+
+  const services = [
+    {
+      number: '01',
+      title: 'Брендинг',
+      desc: 'Создаем визуальные идентичности, которые разрывают шаблоны и остаются в памяти.'
+    },
+    {
+      number: '02',
+      title: 'Web Design',
+      desc: 'Цифровые esperienze на грани искусства и функциональности.'
+    },
+    {
+      number: '03',
+      title: 'Арт-дирекшн',
+      desc: 'Полный контроль над визуальной коммуникацией вашего бренда.'
+    },
+    {
+      number: '04',
+      title: 'Motion',
+      desc: 'Анимация и движение как способ рассказать вашу историю.'
     }
+  ];
 
-    if (!appConfig) return; // For dummy dock apps
-
-    // Center window
-    const winWidth = appConfig.width || INITIAL_WINDOW_SIZE.width;
-    const winHeight = appConfig.height || INITIAL_WINDOW_SIZE.height;
-    const x = Math.max(0, (window.innerWidth - winWidth) / 2) + (Object.keys(windows).length * 20);
-    const y = Math.max(40, (window.innerHeight - winHeight) / 2) + (Object.keys(windows).length * 20);
-
-    setWindows(prev => ({
-      ...prev,
-      [appId]: {
-        id: appId,
-        isOpen: true,
-        isMinimized: false,
-        isMaximized: false,
-        zIndex: nextZIndex,
-        position: { x, y },
-        size: { width: winWidth, height: winHeight }
-      }
-    }));
-    setNextZIndex(prev => prev + 1);
-    setActiveWindowId(appId);
-  };
-
-  const closeWindow = (id: AppID) => {
-    setWindows(prev => {
-      const newWindows = { ...prev };
-      delete newWindows[id];
-      return newWindows;
-    });
-    if (activeWindowId === id) setActiveWindowId(null);
-  };
-
-  const minimizeWindow = (id: AppID) => {
-    setWindows(prev => ({
-      ...prev,
-      [id]: { ...prev[id], isMinimized: true }
-    }));
-    setActiveWindowId(null);
-  };
-
-  const maximizeWindow = (id: AppID) => {
-    setWindows(prev => ({
-      ...prev,
-      [id]: { ...prev[id], isMaximized: !prev[id].isMaximized }
-    }));
-    focusWindow(id);
-  };
-
-  const focusWindow = (id: AppID) => {
-    setWindows(prev => ({
-      ...prev,
-      [id]: { ...prev[id], zIndex: nextZIndex }
-    }));
-    setNextZIndex(prev => prev + 1);
-    setActiveWindowId(id);
-  };
-
-  const moveWindow = (id: AppID, x: number, y: number) => {
-    setWindows(prev => ({
-      ...prev,
-      [id]: { ...prev[id], position: { x, y } }
-    }));
-  };
+  const projects = [
+    {
+      name: 'NEON VOID',
+      category: 'Брендинг / Web',
+      image: 'https://images.unsplash.com/photo-1535905557558-afc4877a26fc?w=1600&q=80'
+    },
+    {
+      name: 'CRIMSON',
+      category: 'Арт-дирекшн',
+      image: 'https://images.unsplash.com/photo-1507643179173-617d654551a3?w=1600&q=80'
+    },
+    {
+      name: 'STATIC NOISE',
+      category: 'Web / Motion',
+      image: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=1600&q=80'
+    }
+  ];
 
   return (
-    <div 
-      className="h-screen w-screen overflow-hidden bg-cover bg-center relative selection:bg-blue-500/30"
-      style={{ backgroundImage: `url(${WALLPAPER_URL})` }}
-    >
-      <MenuBar />
+    <>
+      {/* Noise & Scanlines */}
+      <div className="noise-overlay"></div>
+      <div className="scanlines"></div>
+      
+      {/* Scroll Progress */}
+      <div 
+        className="scroll-progress"
+        style={{ width: `${scrollProgress * 100}%` }}
+      />
+      
+      {/* Tear Strip */}
+      <div className={`tear-strip ${showTear ? 'visible' : ''}`}></div>
+      
+      {/* Corner Brackets */}
+      <div className="corner-bracket top-left"></div>
+      <div className="corner-bracket bottom-right"></div>
+      
+      {/* Navigation */}
+      <nav className="nav-bar">
+        <div className="logo">Tommy<span>Agency</span></div>
+        <div className="nav-links">
+          <a href="#services" className="nav-link">Услуги</a>
+          <a href="#projects" className="nav-link">Проекты</a>
+          <a href="#about" className="nav-link">О нас</a>
+          <a href="#contact" className="nav-link">Контакты</a>
+        </div>
+        <a href="mailto:hello@tommyagency.ru" className="nav-link text-ui" style={{ letterSpacing: '0.6px' }}>
+          hello@tommyagency.ru
+        </a>
+      </nav>
 
-      {/* Desktop Area - Icons */}
-      <div className="absolute top-10 left-4 grid grid-cols-1 gap-6 p-2 z-0">
-        {APPS.map(app => (
-          <button
-            key={app.id}
-            onClick={() => openApp(app.id)}
-            className="group flex flex-col items-center gap-1 w-24 focus:outline-none"
-          >
-            <div className={`w-16 h-16 rounded-2xl shadow-lg flex items-center justify-center text-white transition-transform group-hover:scale-105 group-active:scale-95 ${app.color}`}>
-              <app.icon size={32} />
-            </div>
-            <span className="text-white text-xs font-medium drop-shadow-md px-2 py-0.5 rounded group-hover:bg-white/20 transition-colors">
-              {app.title}
-            </span>
-          </button>
-        ))}
-      </div>
+      {/* Hero Section */}
+      <section className="hero">
+        <div className="hero-bg"></div>
+        <div className="hero-content">
+          <h1 className="text-display-xl hero-title glitch-color">
+            TOMMY AGENCY
+          </h1>
+          <p className="hero-subtitle">
+            Digital Design Studio — Moscow
+          </p>
+          <p className="text-heading" style={{ fontWeight: 300, opacity: 0.8 }}>
+            МЫ СОЗДАЕМ<br />
+            <span style={{ color: 'var(--crimson-heat)' }}>ВИЗУАЛЬНЫЙ ХАОС</span><br />
+            ИЗ КРАСОТЫ
+          </p>
+        </div>
+      </section>
 
-      {/* Windows Layer */}
-      {(Object.values(windows) as WindowState[]).map(win => {
-        const app = APPS.find(a => a.id === win.id);
-        if (!app) return null;
-        return (
-          <Window
-            key={win.id}
-            {...win}
-            title={app.title}
-            onClose={closeWindow}
-            onMinimize={minimizeWindow}
-            onMaximize={maximizeWindow}
-            onFocus={focusWindow}
-            onMove={moveWindow}
-          >
-            {app.component}
-          </Window>
-        );
-      })}
-
-      {/* Dock */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-50 w-auto max-w-[90vw]">
-        <div className="glass-panel px-4 py-3 rounded-2xl flex items-end gap-3 shadow-2xl bg-white/40">
-           {DOCK_APPS.map((app) => (
-             <button
-               key={app.id}
-               onClick={() => openApp(app.id)}
-               className="group relative flex flex-col items-center transition-all duration-300 hover:-translate-y-2"
-             >
-               {/* Tooltip */}
-               <div className="absolute -top-10 opacity-0 group-hover:opacity-100 bg-gray-800 text-white text-xs px-2 py-1 rounded transition-opacity pointer-events-none whitespace-nowrap">
-                 {app.title}
-               </div>
-               
-               {/* Icon */}
-               <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl shadow-lg flex items-center justify-center text-white transition-all ${app.color}`}>
-                 <app.icon size={24} className="sm:w-8 sm:h-8" />
-               </div>
-
-               {/* Active Dot */}
-               <div className={`w-1 h-1 rounded-full bg-gray-800 mt-1 ${windows[app.id] && !windows[app.id].isMinimized ? 'opacity-100' : 'opacity-0'}`} />
-             </button>
-           ))}
+      {/* Marquee Banner */}
+      <div className="marquee-container">
+        <div className="marquee-content">
+          <span className="marquee-item">BRANDING</span>
+          <span className="marquee-item">•</span>
+          <span className="marquee-item">WEB DESIGN</span>
+          <span className="marquee-item">•</span>
+          <span className="marquee-item">ART DIRECTION</span>
+          <span className="marquee-item">•</span>
+          <span className="marquee-item">MOTION</span>
+          <span className="marquee-item">•</span>
+          <span className="marquee-item">BRANDING</span>
+          <span className="marquee-item">•</span>
+          <span className="marquee-item">WEB DESIGN</span>
+          <span className="marquee-item">•</span>
+          <span className="marquee-item">ART DIRECTION</span>
+          <span className="marquee-item">•</span>
+          <span className="marquee-item">MOTION</span>
+          <span className="marquee-item">•</span>
         </div>
       </div>
-    </div>
+
+      {/* Services Section */}
+      <section id="services" className="services">
+        <span className="section-label">// Услуги</span>
+        <div className="services-grid">
+          {services.map((service, index) => (
+            <div key={index} className="service-card">
+              <div className="service-number">{service.number}</div>
+              <h3 className="service-title">{service.title}</h3>
+              <p className="service-desc">{service.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <div className="deco-line"></div>
+
+      {/* Projects Section */}
+      <section id="projects" className="projects">
+        <span className="section-label">// Избранные проекты</span>
+        {projects.map((project, index) => (
+          <div key={index} className="project-item">
+            <img 
+              src={project.image} 
+              alt={project.name}
+              className="project-image"
+            />
+            <div className="project-info">
+              <h2 className="project-name">{project.name}</h2>
+              <span className="project-category">{project.category}</span>
+            </div>
+          </div>
+        ))}
+      </section>
+
+      {/* About Section */}
+      <section id="about" className="about">
+        <div className="about-text">
+          <span className="section-label">// О агентстве</span>
+          <h2 className="text-heading-lg about-heading">
+            МЫ —<br />
+            <span style={{ color: 'var(--crimson-heat)' }}>НОВОЕ</span><br />
+            ПОКОЛЕНИЕ
+          </h2>
+          <p className="about-paragraph">
+            Tommy Agency — это дизайн-студия полного цикла, работающая на стыке искусства, технологий и культурного кода поколения Z.
+          </p>
+          <p className="about-paragraph">
+            Мы не следуем трендам — мы создаем визуальный язык будущего, смешивая эстетику Y2K, швейцарскую типографику и цифровой глитч.
+          </p>
+          <div className="stat-grid">
+            <div className="stat-item">
+              <div className="stat-number">50+</div>
+              <div className="stat-label">Проектов</div>
+            </div>
+            <div className="stat-item">
+              <div className="stat-number">12</div>
+              <div className="stat-label">Наград</div>
+            </div>
+            <div className="stat-item">
+              <div className="stat-number">5</div>
+              <div className="stat-label">Лет</div>
+            </div>
+            <div className="stat-item">
+              <div className="stat-number">∞</div>
+              <div className="stat-label">Идей</div>
+            </div>
+          </div>
+        </div>
+        <div style={{ position: 'relative' }}>
+          <img 
+            src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&q=80"
+            alt="About Tommy Agency"
+            style={{
+              width: '100%',
+              height: '600px',
+              objectFit: 'cover',
+              filter: 'grayscale(100%) contrast(1.2)',
+              borderRadius: '8px'
+            }}
+          />
+        </div>
+      </section>
+
+      <div className="deco-line"></div>
+
+      {/* Contact CTA */}
+      <section id="contact" className="contact-cta">
+        <h2 className="contact-heading glitch">
+          LET'S<br />
+          TALK
+        </h2>
+        <a href="mailto:hello@tommyagency.ru" className="contact-btn">
+          Начать проект
+        </a>
+      </section>
+
+      {/* Footer */}
+      <footer className="footer">
+        <div>
+          <div className="footer-logo">Tommy<span style={{ color: 'var(--crimson-heat)' }}>Agency</span></div>
+          <div className="footer-copy">© 2024 Tommy Agency. All rights reserved.</div>
+        </div>
+        <div className="footer-links">
+          <a href="#" className="footer-link">Telegram</a>
+          <a href="#" className="footer-link">Behance</a>
+          <a href="#" className="footer-link">Instagram</a>
+          <a href="#" className="footer-link">Dribbble</a>
+        </div>
+        <div className="footer-copy">
+          Moscow, Russia<br />
+          tommyagency.ru
+        </div>
+      </footer>
+    </>
   );
 }

@@ -1,0 +1,5 @@
+{
+  "name": "MacOS Portfolio",
+  "description": "A UI/UX Designer portfolio styled like a MacOS desktop environment with interactive windows and Gemini-powered chat assistant.",
+  "requestFramePermissions": []
+}

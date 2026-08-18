@@ -678,7 +678,212 @@
     </style>
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
+    <div class="noise-overlay"></div>
+    <div class="scanlines"></div>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    <div class="corner-bracket top-left"></div>
+    <div class="corner-bracket bottom-right"></div>
+    
+    <!-- Navigation -->
+    <nav class="nav-bar">
+      <div class="logo text-ui">Tommy<span>Agency</span></div>
+      <div class="nav-links">
+        <a href="#services" class="nav-link text-ui">Services</a>
+        <a href="#projects" class="nav-link text-ui">Projects</a>
+        <a href="#about" class="nav-link text-ui">About</a>
+        <a href="#contact" class="nav-link text-ui">Contact</a>
+      </div>
+      <a href="#contact" class="text-ui" style="color: var(--paper-white); text-decoration: none; border: 1px solid var(--paper-white); padding: 10px 20px; border-radius: 70px;">Let's Talk</a>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-content">
+        <h1 class="text-display-xl hero-title glitch-color">TOMMY</h1>
+        <h2 class="text-display-lg hero-title" style="color: var(--crimson-heat);">AGENCY</h2>
+        <p class="hero-subtitle">Design Studio / Digital Experience / Creative Direction</p>
+      </div>
+    </section>
+
+    <!-- Marquee Banner -->
+    <div class="marquee-container">
+      <div class="marquee-content">
+        <span class="marquee-item">BRANDING</span>
+        <span class="marquee-item">•</span>
+        <span class="marquee-item">WEB DESIGN</span>
+        <span class="marquee-item">•</span>
+        <span class="marquee-item">ART DIRECTION</span>
+        <span class="marquee-item">•</span>
+        <span class="marquee-item">MOTION</span>
+        <span class="marquee-item">•</span>
+        <span class="marquee-item">BRANDING</span>
+        <span class="marquee-item">•</span>
+        <span class="marquee-item">WEB DESIGN</span>
+        <span class="marquee-item">•</span>
+        <span class="marquee-item">ART DIRECTION</span>
+        <span class="marquee-item">•</span>
+        <span class="marquee-item">MOTION</span>
+        <span class="marquee-item">•</span>
+      </div>
+    </div>
+
+    <!-- Services Section -->
+    <section class="services" id="services">
+      <span class="section-label">What We Do</span>
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-number">01</div>
+          <h3 class="service-title">Branding</h3>
+          <p class="service-desc">Identity systems that cut through the noise. Visual languages that speak louder than words.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-number">02</div>
+          <h3 class="service-title">Web Design</h3>
+          <p class="service-desc">Digital experiences that merge form and function. Interfaces that feel inevitable.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-number">03</div>
+          <h3 class="service-title">Art Direction</h3>
+          <p class="service-desc">Visual storytelling at scale. Campaigns that command attention and demand to be felt.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-number">04</div>
+          <h3 class="service-title">Motion</h3>
+          <p class="service-desc">Animation that brings static to life. Movement with purpose and personality.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section class="projects" id="projects">
+      <span class="section-label">Selected Works</span>
+      
+      <div class="project-item">
+        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=1600&h=900&fit=crop" alt="Project 1" class="project-image">
+        <div class="project-info">
+          <h3 class="project-name">Crimson Void</h3>
+          <span class="project-category">Branding / Web Design</span>
+        </div>
+      </div>
+
+      <div class="project-item">
+        <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=1600&h=900&fit=crop" alt="Project 2" class="project-image">
+        <div class="project-info">
+          <h3 class="project-name">Neon Dreams</h3>
+          <span class="project-category">Art Direction / Motion</span>
+        </div>
+      </div>
+
+      <div class="project-item">
+        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1600&h=900&fit=crop" alt="Project 3" class="project-image">
+        <div class="project-info">
+          <h3 class="project-name">Silent Echo</h3>
+          <span class="project-category">Full Rebrand</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+      <div class="about-text">
+        <h2 class="text-heading about-heading">We Are<br><span style="color: var(--crimson-heat);">TOMMY AGENCY</span></h2>
+        <p class="about-paragraph">A design studio operating at the intersection of fashion, technology, and raw creative instinct. We don't follow trends — we create visual languages that define them.</p>
+        <p class="about-paragraph">Based in the digital void, working globally. Every project is a statement. Every pixel has purpose.</p>
+        
+        <div class="stat-grid">
+          <div class="stat-item">
+            <div class="stat-number">50+</div>
+            <div class="stat-label">Projects Completed</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">12</div>
+            <div class="stat-label">Design Awards</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">8</div>
+            <div class="stat-label">Years Active</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">∞</div>
+            <div class="stat-label">Creative Possibilities</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact CTA -->
+    <section class="contact-cta" id="contact">
+      <h2 class="contact-heading">LET'S TALK</h2>
+      <a href="mailto:hello@tommyagency.ru" class="contact-btn">hello@tommyagency.ru</a>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div>
+        <div class="footer-logo">TOMMY AGENCY</div>
+        <div class="footer-copy">© 2025 Tommy Agency. All Rights Reserved.</div>
+      </div>
+      <div class="footer-links">
+        <a href="#" class="footer-link">Instagram</a>
+        <a href="#" class="footer-link">Behance</a>
+        <a href="#" class="footer-link">LinkedIn</a>
+        <a href="#" class="footer-link">Telegram</a>
+      </div>
+    </footer>
+
+    <script>
+      // Scroll Progress
+      const scrollProgress = document.getElementById('scrollProgress');
+      window.addEventListener('scroll', () => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.body.scrollHeight - window.innerHeight;
+        const scrollPercent = (scrollTop / docHeight) * 100;
+        scrollProgress.style.width = scrollPercent + '%';
+      });
+
+      // Glitch Effect on Hover for Titles
+      const titles = document.querySelectorAll('.text-display-xl, .text-display-lg, .contact-heading');
+      titles.forEach(title => {
+        title.addEventListener('mouseenter', () => {
+          title.classList.add('glitch');
+          setTimeout(() => title.classList.remove('glitch'), 300);
+        });
+      });
+
+      // Smooth Scroll for Nav Links
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth' });
+          }
+        });
+      });
+
+      // Intersection Observer for Fade-in Animations
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+          }
+        });
+      }, observerOptions);
+
+      // Observe service cards and project items
+      document.querySelectorAll('.service-card, .project-item').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(el);
+      });
+    </script>
   </body>
 </html>
